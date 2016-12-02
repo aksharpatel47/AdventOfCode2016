@@ -34,29 +34,69 @@ enum Direction {
   case East, West, North, South
 }
 
-struct Location {
+struct Coordinate {
   var x: Int
   var y: Int
+}
+
+func ==(c1: Coordinate, c2: Coordinate) -> Bool {
+  return c1.x == c2.x && c1.y == c2.y
+}
+
+struct Location {
+  var coordinate: Coordinate
   var facing: Direction
+  
+  var coordinatesVisited: [Coordinate]
   
   mutating func move(in direction: Direction, for blocks: Int) {
     switch direction {
     case .East:
-      x += blocks
+      for i in 1...blocks {
+        coordinatesVisited.append(Coordinate(x: coordinate.x + i, y: coordinate.y ))
+      }
+      
+      coordinate.x += blocks
     case .West:
-      x -= blocks
+      for i in 1...blocks {
+        coordinatesVisited.append(Coordinate(x: coordinate.x - i, y: coordinate.y ))
+      }
+      
+      coordinate.x -= blocks
     case .North:
-      y += blocks
+      for i in 1...blocks {
+        coordinatesVisited.append(Coordinate(x: coordinate.x, y: coordinate.y + i ))
+      }
+      
+      coordinate.y += blocks
     case .South:
-      y -= blocks
+      for i in 1...blocks {
+        coordinatesVisited.append(Coordinate(x: coordinate.x, y: coordinate.y - i ))
+      }
+      
+      coordinate.y -= blocks
     }
     
     facing = direction
   }
+  
+  func getCoordinatesRevisited() -> [Coordinate] {
+    var coordinatesRevisited = [Coordinate]()
+    
+    for i in 0..<coordinatesVisited.count {
+      for j in (i+1)..<coordinatesVisited.count {
+        if coordinatesVisited[i] == coordinatesVisited[j] {
+          coordinatesRevisited.append(location.coordinatesVisited[i])
+        }
+      }
+    }
+    
+    return coordinatesRevisited
+  }
 }
 
-func shortestPath(for instructions: String) -> Int {
-  var location = Location(x: 0, y: 0, facing: .North)
+func shortestPath(for instructions: String) -> Location {
+  var location = Location(coordinate: Coordinate(x: 0, y: 0), facing: .North, coordinatesVisited: [Coordinate(x: 0,y: 0)])
   
   for instruction in instructions.components(separatedBy: ", ") {
     guard let turn = instruction.characters.first,
@@ -87,6 +127,6 @@ func shortestPath(for instructions: String) -> Int {
     }
   }
   
-  return abs(location.x) + abs(location.y)
+  return location
 }
 

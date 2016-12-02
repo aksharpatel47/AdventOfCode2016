@@ -8,4 +8,12 @@
 
 import Foundation
 
-print(shortestPath(for: instructions))
+let location = shortestPath(for: instructions)
+
+// Print Answer of Day 1
+print("Day 1 Answer: ", abs(location.coordinate.x) + abs(location.coordinate.y))
+
+// Print answer of Day 1 Part 2. The distance of first point visited again.
+if let firstCoordinateRevisited = location.getCoordinatesRevisited().first {
+  print("Day 1 Part 2 Answer: ", abs(firstCoordinateRevisited.x) + abs(firstCoordinateRevisited.y))
+}
