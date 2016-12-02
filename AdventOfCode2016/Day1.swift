@@ -38,6 +38,21 @@ struct Location {
   var x: Int
   var y: Int
   var facing: Direction
+  
+  mutating func move(in direction: Direction, for blocks: Int) {
+    switch direction {
+    case .East:
+      x += blocks
+    case .West:
+      x -= blocks
+    case .North:
+      y += blocks
+    case .South:
+      y -= blocks
+    }
+    
+    facing = direction
+  }
 }
 
 func shortestPath(for instructions: String) -> Int {
@@ -45,35 +60,27 @@ func shortestPath(for instructions: String) -> Int {
   
   for instruction in instructions.components(separatedBy: ", ") {
     guard let turn = instruction.characters.first,
-      let move = Int(instruction.substring(from: instruction.index(after: instruction.startIndex))) else {
+      let blocks = Int(instruction.substring(from: instruction.index(after: instruction.startIndex))) else {
         fatalError("Error while getting required information from the instruction")
     }
     
     switch (turn, location.facing) {
     case ("R", .North):
-      location.facing = .East
-      location.x += move
+      location.move(in: .East, for: blocks)
     case ("R", .East):
-      location.facing = .South
-      location.y -= move
+      location.move(in: .South, for: blocks)
     case ("R", .South):
-      location.facing = .West
-      location.x -= move
+      location.move(in: .West, for: blocks)
     case("R", .West):
-      location.facing = .North
-      location.y += move
+      location.move(in: .North, for: blocks)
     case ("L", .North):
-      location.facing = .West
-      location.x -= move
+      location.move(in: .West, for: blocks)
     case ("L", .West):
-      location.facing = .South
-      location.y -= move
+      location.move(in: .South, for: blocks)
     case ("L", .South):
-      location.facing = .East
-      location.x += move
+      location.move(in: .East, for: blocks)
     case ("L", .East):
-      location.facing = .North
-      location.y += move
+      location.move(in: .North, for: blocks)
     
     default:
       break
